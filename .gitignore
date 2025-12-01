@@ -1,0 +1,17 @@
+ipsjpaper.log
+ipsjpaper.blg
+ipsjpaper.out
+response_revision.soc
+response_revision.loc
+ipsjpaper.fls
+ipsjpaper.fdb_latexmk
+ipsjpaper.aux
+ipsjpaper.bbl
+ipsjpaper.bak0
+
+# Ignore pdf files if you don't want to track them
+ipsjpaper.pdf
+esample.pdf
+*.bbl
+*.synctex.gz
+*.aux

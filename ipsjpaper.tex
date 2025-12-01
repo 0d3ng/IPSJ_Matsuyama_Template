@@ -1,0 +1,162 @@
+\documentclass[english,techrep,JIP]{ipsj}
+
+\usepackage{graphicx}
+\usepackage{latexsym}
+% \usepackage{caption}
+% \captionsetup[lstlisting]{justification=raggedright, singlelinecheck=false}
+\usepackage{listings}
+% \captionsetup[lstlisting]{position=top, margin=0cm,labelfont={bf, small, stretch=1.17}, labelsep=period, textfont={small, stretch=1.17}, aboveskip=6pt, singlelinecheck=off, justification=justified}
+\usepackage{url}
+
+\renewcommand{\arraystretch}{1.4}
+
+\lstdefinelanguage{Dart}{
+  keywords={abstract, else, import, super, as, enum, in, switch, assert, export, interface, sync, async, extends, is, this, await, external, library, throw, break, factory, mixin, true, case, false, new, try, catch, final, null, typedef, class, finally, on, var, const, for, operator, void, continue, Function, part, while, default, get, rethrow, with, deferred, hide, return, yield, do, if, set},
+  keywordstyle=\bfseries,
+  ndkeywords={@override, @deprecated},
+  ndkeywordstyle=\bfseries,
+  identifierstyle=\color{black},
+  sensitive=true,
+  comment=[l]{//},
+  morecomment=[s]{/*}{*/},
+  commentstyle=\color{gray}\ttfamily,
+  stringstyle=\color{gray}\ttfamily,
+  morestring=[b]',
+  morestring=[b]"
+}
+
+\lstset{
+  language=Dart,
+  basicstyle=\ttfamily\footnotesize,
+  showstringspaces=false,
+  showspaces=false,
+  numbers=left, 
+  tabsize=2,
+  breaklines=true,
+  showtabs=false,
+  captionpos=b,
+  frame=tb, 
+  rulecolor=\color{black},
+  xleftmargin=15pt, 
+  xrightmargin=15pt, 
+  framexleftmargin=5pt, 
+  framexrightmargin=5pt, 
+  framextopmargin=0pt,
+  framexbottommargin=0pt, 
+  aboveskip=10pt,
+  belowskip=10pt
+}
+
+\usepackage[most]{tcolorbox}
+\tcbset{
+  colback=gray!5!white,
+  colframe=gray!50!black,
+  boxrule=0.4pt,
+  arc=2mm,
+  outer arc=2mm,
+  boxsep=4pt,
+  left=6pt,
+  right=6pt,
+  top=4pt,
+  bottom=4pt,
+  enhanced
+}
+
+\def\Underline{\setbox0\hbox\bgroup\let\\\endUnderline}
+\def\endUnderline{\vphantom{y}\egroup\smash{\underline{\box0}}\\}
+\def\|{\verb|}
+
+\setcounter{volume}{26}% vol25=2017
+\setcounter{number}{1}%
+\setcounter{page}{1}
+
+\received{2016}{3}{4}
+%\rereceived{2011}{10}{1}   % optional
+%\rerereceived{2011}{10}{31} % optional
+\accepted{2016}{8}{1}
+
+\usepackage[varg]{txfonts}%%!!
+\makeatletter%
+\input{ot1txtt.fd}
+\makeatother%
+
+\begin{document}
+
+\title{A Proposal of a Lightweight Data Security Mechanism for IoT Devices
+}
+
+\affiliate{Okayama}{Department of Information and Communication System, Okayama University, Okayama 700-8530, Japan}
+
+\author{Noprianto}{Okayama}[noprianto@s.okayama-u.ac.jp]
+\author{Nobuo Funabiki}{Okayama}[funabiki@okayama-u.ac.jp]
+\author{Htoo Htoo Sandi Kyaw}{Okayama}
+\author{Komang Candra Brata}{Okayama}
+\author{I Nyoman Darma Kotama}{Okayama}
+
+
+\begin{abstract}
+    % challenges data security IoT devices.
+    In the {\em Internet of Things (IoT)} ecosystem, autonomous data communication requires robust protection mechanisms, especially for sensitive information such as financial transactions or healthcare records. Data modification and theft represent major threats that compromise IoT system reliability.
+    % contributions
+    To address these challenges, {\em AES-GCM (Advanced Encryption Standard with Galois/Counter Mode) authenticated encryption} is implemented and integrated into the {\em IoT platform SEMAR}, which has been developed in prior work. The proposed method leverages {\em hardware-accelerated cryptography on ESP32 microcontrollers to ensure both data integrity and confidentiality with minimal computational overhead.}
+    % evaluation
+    Performance evaluation was conducted by measuring encryption time and memory consumption across three AES key lengths (128, 192, and 256 bits) and five payload sizes (256 to 32,768 bytes) on ESP32 hardware.
+    % results
+    The experimental results demonstrate that encryption time scales linearly from 1.126 ms for 256-byte payloads to 29.584 ms for 32 KB payloads, representing less than 3\% processing overhead for typical IoT transmission intervals. Furthermore, key length has minimal impact on performance (less than 3\% variation), enabling the use of AES-256 for stronger security without compromising real-time responsiveness in resource-constrained IoT applications.
+
+\end{abstract}
+
+\begin{keyword}
+    IoT Security, Data Protection, Lightweight Encryption, Performance Evaluation, SEMAR Platform
+\end{keyword}
+
+\maketitle
+
+\section{Introduction}
+
+The {\em Internet of Things (IoT)} has emerged as a transformative technology across various sectors, including transportation, agriculture, and healthcare. IoT devices continuously collect and transmit data over network infrastructures, often involving sensitive and confidential information vulnerable to unauthorized access and manipulation. Ensuring data security in IoT environments presents significant challenges due to the resource-constrained nature of these devices, which typically operate with limited computational power, memory, and energy budgets. Recent research has focused on lightweight security mechanisms tailored for IoT devices, such as Twine-Mersenne that combines lightweight cryptography with fuzzy logic \cite{atanov_2024}, and approaches integrating Zstandard compression with the Tiny Encryption Algorithm (TEA) \cite{kadhim_2022}. While these solutions show promise, there remains a need for authenticated encryption schemes that can leverage hardware acceleration capabilities available in modern IoT microcontrollers.
+
+To address this gap, we propose a lightweight data security mechanism based on AES-GCM (Advanced Encryption Standard with Galois/Counter Mode) implemented on ESP32 microcontrollers and integrated with the {\em SEMAR IoT platform}, which we developed in prior work \cite{2023_panduman}. AES-GCM provides both confidentiality and authenticity through {\em authenticated encryption with associated data (AEAD)}, making it suitable for protecting IoT sensor data. The ESP32 platform includes hardware cryptographic acceleration for AES operations, enabling efficient encryption with minimal performance overhead. Our implementation is {\em evaluated across various key sizes (128, 192, and 256 bits) and payload sizes (256 to 32768 bytes) to characterize performance on resource-constrained hardware}. The main contributions of this paper are: {\em (1) design and implementation of AES-GCM encryption integrated with the SEMAR IoT platform for secure data transmission, (2) comprehensive performance evaluation on ESP32 hardware, and (3) validation of the feasibility of authenticated encryption for real-time IoT sensor data applications}.
+
+\section{Proposed Method}
+
+Figure \ref{fig:architecture} illustrates the system architecture consisting of {\em ESP32-based IoT devices, MQTT broker with TLS, and SEMAR Application System} in cloud. The ESP32 (dual-core Xtensa LX6 at 240 MHz, 4 MB PSRAM) connects via WiFi to MQTT broker through TLS, then to SEMAR which stores decrypted data in MongoDB. The system employs AES-GCM for authenticated encryption, chosen for its combined confidentiality and authenticity suitable for resource-constrained devices. We test three key sizes (AES-128/192/256) and five payload sizes (256-32768 bytes) using mbedTLS library with hardware acceleration. Each operation generates a random 12-byte IV and 16-byte authentication tag for integrity verification. Data is transmitted in binary format, reducing overhead by 33\% compared to Base64 encoding. This multi-layer approach provides defense-in-depth: TLS secures transport while AES-GCM ensures application-layer confidentiality and integrity even if transport is compromised.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/architecture.png}
+\caption{System architecture.}
+\label{fig:architecture}
+\end{figure}
+
+\section{Experimental Results}
+
+All experiments were conducted on an ESP32 microcontroller with a {\em dual-core Tensilica Xtensa LX6 processor operating at 240 MHz and 4 MB PSRAM}. The implementation utilizes the mbedTLS library with hardware acceleration enabled for AES operations. Each test case was executed five times, and the average values are reported. The evaluation covers three key sizes (128, 192, and 256 bits) and five payload sizes (256, 1024, 4096, 16384, and 32768 bytes).
+
+Figure \ref{fig:enc_time_payload} illustrates the relationship between encryption time and payload size for AES-128, AES-192, and AES-256. The results demonstrate that encryption time increases linearly with payload size across all key configurations. For AES-128, encryption time ranges from 1.126 ms for 256-byte payloads to 29.584 ms for 32,768-byte payloads, representing approximately a 26-fold increase for data 128 times larger, confirming that the hardware-accelerated AES-GCM implementation efficiently handles variable payload sizes without introducing non-linear computational overhead. Figure \ref{fig:enc_time_keylen} compares encryption time across different AES key lengths, showing that key length has minimal impact on encryption performance. The average encryption times are 10.39 ms for AES-128, 10.13 ms for AES-192, and 10.38 ms for AES-256, with differences of less than 3\%. Memory consumption increases linearly and consistently with payload sizes, with no evidence of memory leaks across all test cases, demonstrating efficient memory management on the resource-constrained ESP32 platform.
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/enc_time_vs_payload.png}
+\caption{Encryption time with key 128,192, and 256 bits for different payload sizes.}
+\label{fig:enc_time_payload}
+\end{figure}
+
+\begin{figure}[h!]
+\centering
+\includegraphics[width=0.45\textwidth]{figures/enc_time_distribution.png}
+\caption{Encryption time distribution for AES key lengths.}
+\label{fig:enc_time_keylen}
+\end{figure}
+
+AES-GCM's 128-bit authentication tag verifies data authenticity and detects tampering at single-bit level. Failed verification triggers automatic rejection, preventing man-in-the-middle attacks. This authenticated encryption fulfills both confidentiality and integrity in one operation, more efficient than separate encryption and HMAC.
+
+Results validate AES-GCM feasibility on ESP32 for IoT data transmission. Even 32 KB payloads require <30 ms encryption (<3\% overhead for 1-second intervals), while minimal key length impact enables AES-256 without compromising real-time responsiveness. The TLS + AES-GCM combination provides defense-in-depth security, protecting both transport and application layers.
+
+\section{Conclusion}
+
+This paper proposes a lightweight data security mechanism based on AES-GCM for resource-constrained IoT devices, implemented on ESP32 microcontrollers and integrated with the {\em SEMAR IoT platform}. The experimental results demonstrate that encryption time scales linearly from 1.126 ms (256 bytes) to 29.584 ms (32 KB), representing less than 3\% overhead for typical IoT transmission intervals. Key length (128, 192, or 256 bits) has minimal impact on performance (less than 3\% variation), enabling the use of AES-256 for stronger security without significant performance penalties. Future research will focus on power consumption analysis and integration with other IoT protocols such as CoAP and LoRaWAN.
+
+\bibliographystyle{IEEEtran}
+\bibliography{references}
+\end{document}
